@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
+
 import "./App.css";
-import { Participant } from "./types";
-import { addParticipant, getParticipants } from "./api";
+import { Draw, Participant } from "./types";
+import {
+  addParticipant,
+  get_last_five_draws,
+  getParticipants,
+  start_draw,
+} from "./api";
+import { parse, parseISO } from "date-fns";
 
 function App() {
   const [participants, setParticipants] = useState<Participant[]>([]);
@@ -10,6 +17,7 @@ function App() {
   const [blacklist, setBlacklist] = useState<number[]>([]);
   const [selectedParticipant, setSelectedParticipant] =
     useState<Participant | null>(null);
+  const [drawResult, setDrawResult] = useState<Draw[]>([]);
 
   useEffect(() => {
     const fetchParticipants = async () => {
@@ -17,7 +25,13 @@ function App() {
       setParticipants(data);
     };
 
+    const fetchDraws = async () => {
+      const results = await get_last_five_draws();
+      setDrawResult(results);
+    };
+
     fetchParticipants();
+    fetchDraws();
   }, []);
 
   const handleAddParticipant = async () => {
@@ -32,7 +46,14 @@ function App() {
   const handleAddToBlacklist = () => {
     if (selectedParticipant) {
       setBlacklist([...blacklist, selectedParticipant.id]);
+      setSelectedParticipant(null);
     }
+  };
+
+  const handleStartDraw = async () => {
+    await start_draw();
+    const results = await get_last_five_draws();
+    setDrawResult(results);
   };
 
   return (
@@ -91,12 +112,36 @@ function App() {
           </div>
           <div>Blacklisted :{blacklist.join(", ")}</div>
           <button
-            disabled={!name || !gift}
+            disabled={!name || !gift || blacklist.length === 0}
             className="button"
             onClick={handleAddParticipant}
           >
             Add Participant
           </button>
+        </div>
+        <button
+          disabled={participants.length < 2}
+          className="button"
+          onClick={handleStartDraw}
+        >
+          Start a draw
+        </button>
+        <hr className="solid" />
+        <div>
+          <h3> 5 last results :</h3>
+          {drawResult.map((draw) => (
+            <div key={draw.id}>
+              <hr className="solid" />
+              {parseISO(draw.date).toString()}
+              <div>
+                {draw.draws.map((d) => (
+                  <div key={d[0]}>
+                    {d[0]} -&gt; {d[1]}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

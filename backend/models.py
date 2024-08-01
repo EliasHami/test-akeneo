@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ARRAY, Date, Enum
+from sqlalchemy import Column, Integer, String, ARRAY, DateTime, Enum
 from database import Base
 
 
@@ -15,6 +15,6 @@ class Draw(Base):
     __tablename__ = "draw"
 
     id = Column(Integer, primary_key=True, index=True)
-    date = Column(Date)
+    date = Column(DateTime)
     participants = Column(ARRAY(String))
     draws = Column(ARRAY(String))
