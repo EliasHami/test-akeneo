@@ -12,3 +12,16 @@ export const getParticipants = async () => {
     console.error(error);
   }
 };
+
+export const addParticipant = async (payload: {
+  name: string;
+  gift: string;
+  blacklist: string[];
+}) => {
+  try {
+    const response = await axiosInstance.post("/participant", payload);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
