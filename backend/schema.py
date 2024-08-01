@@ -6,3 +6,9 @@ class ParticipantSchema(BaseModel):
     name: str
     gift: str
     blacklist: list[str]
+
+
+class ParticipantCreate(BaseModel):
+    name: str
+    gift: str
+    blacklist: list[str]
