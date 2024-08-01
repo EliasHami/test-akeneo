@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from fastapi import FastAPI, Depends
 from schema import ParticipantCreate
 from datetime import datetime
+import random
 
 Base.metadata.create_all(bind=engine)
 
@@ -40,16 +41,51 @@ def create_participant(
     return participant
 
 
+def get_draws(participants):
+    # potential partners for each participant
+    potential_partners = {}
+    for participant in participants:
+        if participant.blacklist:
+            potential_partners[participant.name] = [
+                p
+                for p in participants
+                if p.name != participant.name and p.id not in participant.blacklist
+            ]
+        else:
+            potential_partners[participant.name] = [
+                p for p in participants if p.name != participant.name
+            ]
+    draws = []
+    for participant in participants:
+        if potential_partners[participant.name]:
+            # select random partner
+            draw = random.choice(potential_partners[participant.name])
+            draws.append((participant.name, draw.gift))
+            # Remove to avoid duplicate draws
+            for key in potential_partners:
+                potential_partners[key] = [
+                    item for item in potential_partners[key] if item.id != draw.id
+                ]
+        else:
+            # no valid draw is possible
+            print(
+                f"No valid draw for {participant.name}. Consider revising the blacklist."
+            )
+
+    return draws
+
+
 @app.post("/draw/start")
 def start_draw(db: Session = Depends(get_db)):
-    participants = db.query(Participant.name).all()
+    participants = db.query(Participant).all()
     if len(participants) < 2:
         return "Not enough participants"
 
+    draws = get_draws(participants)
     draw = Draw(
         date=datetime.now(),
-        participants=[name[0] for name in participants],
-        draws=[],
+        participants=[p.name for p in participants],
+        draws=draws,
     )
     db.add(draw)
     db.commit()

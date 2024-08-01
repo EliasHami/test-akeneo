@@ -19,5 +19,7 @@ users can:
 
 - [x] create participant api (list, create) and model : `id`, `name`, `blacklist`, `gift`
 - [x] create draw model : `id`, `date`, `participants`, `draws`
-- [] create start draw api
+- [x] create start draw api
 - [x] create get last 5 draws api
+- [] frontend for participants
+- [] frontend for draws
