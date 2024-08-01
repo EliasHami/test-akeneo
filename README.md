@@ -17,7 +17,7 @@ users can:
 
 ## todo
 
-- [] create participant api and model : `id`, `name`, `blacklist`, `gift`
+- [] create participant api (list, create) and model : `id`, `name`, `blacklist`, `gift`
 - [] create draw model : `id`, `date`, `participants`, `draws`
 - [] create start draw api
 - [] create get last 5 draws api

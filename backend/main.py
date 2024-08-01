@@ -1,15 +1,23 @@
 from typing import Union
+from models import Base, Participant
+from database import engine, SessionLocal
+from sqlalchemy.orm import Session
+from fastapi import FastAPI, Depends
 
-from fastapi import FastAPI
+Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+def get_db():
+    try:
+        db = SessionLocal()
+        yield db
+    finally:
+        db.close()
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
+@app.get("/participants")
+def participants(db: Session = Depends(get_db)):
+    participants = db.query(Participant).all()
+    return participants
