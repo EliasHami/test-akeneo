@@ -16,7 +16,7 @@ export const getParticipants = async () => {
 export const addParticipant = async (payload: {
   name: string;
   gift: string;
-  blacklist: string[];
+  blacklist: number[];
 }) => {
   try {
     const response = await axiosInstance.post("/participant", payload);

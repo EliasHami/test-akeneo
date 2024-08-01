@@ -7,6 +7,9 @@ function App() {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [name, setName] = useState("");
   const [gift, setGift] = useState("");
+  const [blacklist, setBlacklist] = useState<number[]>([]);
+  const [selectedParticipant, setSelectedParticipant] =
+    useState<Participant | null>(null);
 
   useEffect(() => {
     const fetchParticipants = async () => {
@@ -18,11 +21,18 @@ function App() {
   }, []);
 
   const handleAddParticipant = async () => {
-    await addParticipant({ name, gift, blacklist: [] });
+    await addParticipant({ name, gift, blacklist });
     const data = await getParticipants();
     setParticipants(data);
     setName("");
     setGift("");
+    setBlacklist([]);
+  };
+
+  const handleAddToBlacklist = () => {
+    if (selectedParticipant) {
+      setBlacklist([...blacklist, selectedParticipant.id]);
+    }
   };
 
   return (
@@ -31,7 +41,7 @@ function App() {
       <div className="container">
         {participants.map((participant) => (
           <div className="participant" key={participant.id}>
-            {participant.name}
+            {participant.id}. {participant.name}
           </div>
         ))}
         <div className="form">
@@ -55,6 +65,31 @@ function App() {
               onChange={(e) => setGift(e.target.value)}
             />
           </div>
+          <div className="formfield">
+            <label htmlFor="participantBlacklist">Blacklist</label>
+            <select
+              id="participantBlacklist"
+              value={selectedParticipant?.id || ""}
+              onChange={(e) => {
+                console.log({ val: e.target.value, participants });
+                setSelectedParticipant(
+                  participants.find((p) => p.id === Number(e.target.value)) ||
+                    null
+                );
+              }}
+            >
+              <option value="">Select participant</option>
+              {participants.map((participant) => (
+                <option key={participant.id} value={participant.id}>
+                  {participant.name}
+                </option>
+              ))}
+            </select>
+            <button className="button" onClick={handleAddToBlacklist}>
+              +
+            </button>
+          </div>
+          <div>Blacklisted :{blacklist.join(", ")}</div>
           <button
             disabled={!name || !gift}
             className="button"

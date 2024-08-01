@@ -7,8 +7,8 @@
 
 users can:
 
-- [] create a list of participants
-- [] create a blacklist of participants and link to a participant
+- [x] create a list of participants
+- [x] create a blacklist of participants
 - [] start a draw
   - [] each participant draw a gift
   - [] each participant receive a gift
@@ -21,5 +21,5 @@ users can:
 - [x] create draw model : `id`, `date`, `participants`, `draws`
 - [x] create start draw api
 - [x] create get last 5 draws api
-- [] frontend for participants
+- [x] frontend for participants
 - [] frontend for draws

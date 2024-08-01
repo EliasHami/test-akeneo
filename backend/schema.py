@@ -11,4 +11,4 @@ class ParticipantSchema(BaseModel):
 class ParticipantCreate(BaseModel):
     name: str
     gift: str
-    blacklist: list[str]
+    blacklist: list[int]

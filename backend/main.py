@@ -35,7 +35,7 @@ def get_db():
 
 @app.get("/participants")
 def get_participants(db: Session = Depends(get_db)):
-    participants = db.query(Participant).all()
+    participants = db.query(Participant).order_by(Participant.id).all()
     return participants
 
 
@@ -108,5 +108,5 @@ def start_draw(db: Session = Depends(get_db)):
 
 @app.get("/draws/last_five")
 def get_last_fice_draws(db: Session = Depends(get_db)):
-    draws = db.query(Draw).limit(5).all()
+    draws = db.query(Draw).order_by(Draw.date.desc()).limit(5).all()
     return draws
